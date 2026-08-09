@@ -359,6 +359,7 @@ add("ai", "codemod codemod-wordmark")
 add("corp", "mtn")
 add("pay", "gtco mpesa zenith-bank moniepoint")
 add("shop", "takealot")
+add("ai", "llmgateway llmgateway-wordmark")
 # ============================================================
 
 
