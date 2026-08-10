@@ -741,23 +741,35 @@ const ic = (k, cls = "icon") =>
   `<svg class="${cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${I[k]}</svg>`;
 
 /* ---------- sponsor ---------- */
-const SPONSOR = {
-  n: "lndev-ui",
-  url: "https://www.lndevui.com/?utm_source=logos.lndev.me&utm_medium=referral&utm_campaign=sponsored-card",
-  tagline: "UI components & templates",
-};
+const SPONSORS = [
+  {
+    n: "lndev-ui",
+    url: "https://www.lndevui.com/?utm_source=logos.lndev.me&utm_medium=referral&utm_campaign=sponsored-card",
+    tagline: "UI components & templates",
+    badge: "sponsored",
+  },
+  {
+    n: "claude",
+    url: "https://claude.com/?utm_source=logos.lndev.me&utm_medium=referral&utm_campaign=oss-card",
+    tagline: "AI assistant by Anthropic",
+    badge: "oss",
+  },
+];
+const badgeHtml = s =>
+  s.badge === "oss" ? `<span class="badge-gold">OSS</span>` : `<span class="badge-gold">${ic("crown")}Sponsored</span>`;
+const badgeLabel = s => (s.badge === "oss" ? "OSS" : "sponsored");
 /* shown for any category/type/page filter; hidden only when a search doesn't match its name */
-function sponsorMatches() {
+function sponsorMatches(s) {
   const tokens = norm(state.q).split(" ").filter(Boolean);
   if (!tokens.length) return true;
-  const hay = norm(SPONSOR.n + " " + SPONSOR.n.replace(/-/g, "") + " " + SPONSOR.tagline);
+  const hay = norm(s.n + " " + s.n.replace(/-/g, "") + " " + s.tagline);
   return tokens.every(t => hay.includes(t));
 }
 
 /* ---------- data ---------- */
 const ALL_ITEMS = [];
 for (const c of CATS) for (const n of c.items) {
-  if (n === SPONSOR.n) continue; // pinned separately as the sponsored card
+  if (SPONSORS.some(s => s.n === n)) continue; // pinned separately as an OSS card
   ALL_ITEMS.push({ n, cat: c.name, key: c.key, wm: n.endsWith("-wordmark") });
 }
 ALL_ITEMS.sort((a, b) => a.n.localeCompare(b.n));
@@ -872,29 +884,29 @@ function rowHtml(it) {
   </div>`;
 }
 
-/* ---------- sponsored card ---------- */
-function sponsorCellHtml() {
-  return `<div class="cell sponsor" data-sponsor role="link" tabindex="0" aria-label="${SPONSOR.n} — sponsored, opens an external page">
+/* ---------- pinned OSS cards ---------- */
+function sponsorCellHtml(s) {
+  return `<div class="cell sponsor" data-sponsor="${s.n}" role="link" tabindex="0" aria-label="${s.n} — ${badgeLabel(s)}, opens an external page">
     <span class="sponsor-ext" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg></span>
-    <span class="badge-gold">${ic("crown")}Sponsored</span>
-    <img src="logos/${SPONSOR.n}.svg" alt="${SPONSOR.n}" loading="lazy" />
-    <span class="cname">${SPONSOR.n}</span>
+    ${badgeHtml(s)}
+    <img src="logos/${s.n}.svg" alt="${s.n}" loading="lazy" />
+    <span class="cname">${s.n}</span>
     <div class="cell-actions">
-      <a class="pillbtn" href="logos/${SPONSOR.n}.svg" download="${SPONSOR.n}.svg">${ic("download")}SVG</a>
-      <button class="pillbtn" type="button" data-copy="${SPONSOR.n}">${ic("copy")}Copy</button>
+      <a class="pillbtn" href="logos/${s.n}.svg" download="${s.n}.svg">${ic("download")}SVG</a>
+      <button class="pillbtn" type="button" data-copy="${s.n}">${ic("copy")}Copy</button>
     </div>
   </div>`;
 }
-function sponsorRowHtml() {
-  return `<div class="row sponsor" data-sponsor role="link" tabindex="0" aria-label="${SPONSOR.n} — sponsored, opens ${SPONSOR.url}">
+function sponsorRowHtml(s) {
+  return `<div class="row sponsor" data-sponsor="${s.n}" role="link" tabindex="0" aria-label="${s.n} — ${badgeLabel(s)}, opens ${s.url}">
     <div class="left">
-      <span class="thumb"><img src="logos/${SPONSOR.n}.svg" alt="${SPONSOR.n}" loading="lazy" /></span>
-      <span class="nm"><span class="n">${SPONSOR.n}</span><span class="c">${SPONSOR.tagline}</span></span>
+      <span class="thumb"><img src="logos/${s.n}.svg" alt="${s.n}" loading="lazy" /></span>
+      <span class="nm"><span class="n">${s.n}</span><span class="c">${s.tagline}</span></span>
     </div>
     <div class="right">
-      <span class="badge-gold">${ic("crown")}Sponsored</span>
-      <a class="iconbtn" href="logos/${SPONSOR.n}.svg" download="${SPONSOR.n}.svg" aria-label="Download ${SPONSOR.n}">${ic("download")}</a>
-      <button class="iconbtn" type="button" data-copy="${SPONSOR.n}" aria-label="Copy ${SPONSOR.n} SVG">${ic("copy")}</button>
+      ${badgeHtml(s)}
+      <a class="iconbtn" href="logos/${s.n}.svg" download="${s.n}.svg" aria-label="Download ${s.n}">${ic("download")}</a>
+      <button class="iconbtn" type="button" data-copy="${s.n}" aria-label="Copy ${s.n} SVG">${ic("copy")}</button>
     </div>
   </div>`;
 }
@@ -919,7 +931,7 @@ function update(scrollTop) {
   if (state.sort === "desc") list = list.slice().reverse();
   const results = document.getElementById("results");
   const bar = document.getElementById("paginationBar");
-  const showSponsor = sponsorMatches();
+  const shownSponsors = SPONSORS.filter(sponsorMatches);
 
   if (!list.length) {
     results.innerHTML = `<div class="empty">
@@ -927,22 +939,24 @@ function update(scrollTop) {
       <p class="d">Try a brand like <code>react</code>, <code>stripe</code> or <code>figma</code> — or clear your filters.</p>
       <button type="button" id="emptyClear">Clear filters</button>
       <a class="contribute-link" href="https://github.com/__REPO__/blob/master/CONTRIBUTING.md" target="_blank" rel="noreferrer">Can’t find it? Contribute it to the collection →</a>
-      <div class="empty-sponsor">${sponsorCellHtml()}</div>
+      <div class="empty-sponsor">${SPONSORS.map(sponsorCellHtml).join("")}</div>
     </div>`;
     bar.hidden = true;
     document.getElementById("emptyClear").onclick = clearAll;
     return;
   }
 
-  // the pinned sponsored card counts toward the page size
-  const eff = Math.max(1, state.perPage - (showSponsor ? 1 : 0));
+  // the pinned OSS cards count toward the page size
+  const eff = Math.max(1, state.perPage - shownSponsors.length);
   const totalPages = Math.max(1, Math.ceil(list.length / eff));
   state.page = Math.min(state.page, totalPages);
   const start = (state.page - 1) * eff;
   const end = Math.min(start + eff, list.length);
   const slice = list.slice(start, end);
 
-  const sponsorHtml = showSponsor ? (state.view === "grid" ? sponsorCellHtml() : sponsorRowHtml()) : "";
+  const sponsorHtml = shownSponsors
+    .map(s => (state.view === "grid" ? sponsorCellHtml(s) : sponsorRowHtml(s)))
+    .join("");
   results.innerHTML = state.view === "grid"
     ? `<div class="grid">${sponsorHtml}${slice.map(cellHtml).join("")}</div>`
     : `<div class="rows">${sponsorHtml}${slice.map(rowHtml).join("")}</div>`;
@@ -972,16 +986,24 @@ document.getElementById("pages").addEventListener("click", e => {
 });
 
 /* ---------- sponsor click (card redirects, actions don't) ---------- */
+function sponsorUrlFor(el) {
+  const s = SPONSORS.find(x => x.n === el.dataset.sponsor);
+  return s ? s.url : null;
+}
 document.getElementById("results").addEventListener("click", e => {
   const sp = e.target.closest("[data-sponsor]");
   if (!sp) return;
   if (e.target.closest("a, button")) return; // SVG download / Copy keep their own behavior
-  window.open(SPONSOR.url, "_blank", "noopener");
+  const url = sponsorUrlFor(sp);
+  if (url) window.open(url, "_blank", "noopener");
 });
 document.getElementById("results").addEventListener("keydown", e => {
   if (e.key !== "Enter") return;
   const sp = e.target.closest("[data-sponsor]");
-  if (sp && !e.target.closest("a, button")) window.open(SPONSOR.url, "_blank", "noopener");
+  if (sp && !e.target.closest("a, button")) {
+    const url = sponsorUrlFor(sp);
+    if (url) window.open(url, "_blank", "noopener");
+  }
 });
 
 /* ---------- copy ---------- */
