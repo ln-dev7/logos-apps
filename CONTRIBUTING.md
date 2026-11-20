@@ -2,9 +2,6 @@
 
 Want to add a logo to the collection? Awesome — here's the whole process.
 
-> 💰 Looking for the **gold sponsored card** pinned first in the gallery instead?
-> That's a paid spot — open [logos.lndev.me/?modal=sponsor](https://logos.lndev.me/?modal=sponsor).
-
 ## 1. Add your SVG file
 
 Drop your file in [`logos/`](./logos):
