@@ -361,6 +361,8 @@ add("pay", "gtco mpesa zenith-bank moniepoint")
 add("shop", "takealot")
 add("ai", "llmgateway llmgateway-wordmark")
 add("dev", "docker-new docker-new-wordmark")
+add("shop", "eldorado eldorado-wordmark gamsgo")
+add("pay", "spenda")
 # ============================================================
 
 
