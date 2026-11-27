@@ -2,10 +2,10 @@
 
 # 🎨 Logos Apps
 
-### A free, open collection of **15,023** clean SVG logos for apps, tools & tech brands.
+### A free, open collection of **15,025** clean SVG logos for apps, tools & tech brands.
 
 <p>
-  <img alt="Logos" src="https://img.shields.io/badge/logos-15023-6366f1?style=for-the-badge" />
+  <img alt="Logos" src="https://img.shields.io/badge/logos-15025-6366f1?style=for-the-badge" />
   <img alt="Format" src="https://img.shields.io/badge/format-SVG-f59e0b?style=for-the-badge" />
   <img alt="Price" src="https://img.shields.io/badge/price-free-22c55e?style=for-the-badge" />
 </p>
@@ -60,7 +60,7 @@ Every logo, organized by category — open a category to see its full table:
 - [🛒 E-commerce & CMS](./categories/shop.md) — **105**
 - [🎵 Media & Entertainment](./categories/media.md) — **127**
 - [🖥️ OS, Platforms & Browsers](./categories/os.md) — **137**
-- [📊 Analytics, Marketing & CRM](./categories/mkt.md) — **162**
+- [📊 Analytics, Marketing & CRM](./categories/mkt.md) — **164**
 - [🔐 Security & Identity](./categories/sec.md) — **199**
 - [🌐 Web Standards & Protocols](./categories/web.md) — **70**
 - [🏢 Companies & Services](./categories/corp.md) — **5641**
